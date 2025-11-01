@@ -1,3 +1,4 @@
+from calendar import c
 import os
 import sys
 # 检查是否在Maya环境中
@@ -1149,6 +1150,8 @@ class FolderBrowser(QMainWindow):
                         self.delete_scb_checkbox.setChecked(True)
                     if hasattr(self, 'delete_anm_checkbox'):
                         self.delete_anm_checkbox.setChecked(True)
+            except Exception:
+                pass
             
             # 检查是否有选中的文件夹/文件
             selected_items = []
