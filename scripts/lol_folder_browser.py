@@ -1,4 +1,3 @@
-from calendar import c
 import os
 import sys
 # 检查是否在Maya环境中
@@ -9,15 +8,22 @@ try:
     in_maya = True
     # 在Maya中使用PySide2需要特殊导入
     from PySide2 import QtCore, QtGui, QtWidgets
+    from PySide2.QtWidgets import (
+        QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, 
+        QPushButton, QTreeWidget, QTreeWidgetItem, QFileDialog, QSplitter, 
+        QFrame, QMessageBox, QProgressDialog, QCheckBox
+    )
+    from PySide2.QtCore import Qt, QTimer, QSettings
+    from PySide2.QtGui import QIcon
     from shiboken2 import wrapInstance
 except ImportError:
     # 不在Maya中时使用标准PySide2导入
     from PySide2.QtWidgets import (
         QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
         QLineEdit, QPushButton, QTreeWidget, QTreeWidgetItem, QFileDialog,
-        QSplitter, QFrame, QMessageBox
+        QSplitter, QFrame, QMessageBox, QProgressDialog, QCheckBox
     )
-    from PySide2.QtCore import Qt, Signal, QSettings
+    from PySide2.QtCore import Qt, QTimer, QSettings
     from PySide2.QtGui import QIcon
 
 class FolderBrowser(QMainWindow):
@@ -140,11 +146,6 @@ class FolderBrowser(QMainWindow):
         tex_group_layout.setSpacing(5)  # 设置内部垂直间距
         
         # 添加删除tex文件勾选框
-        self.delete_tex_checkbox = QWidget() if in_maya else QWidget()
-        if in_maya:
-            from PySide2.QtWidgets import QCheckBox
-        else:
-            from PySide2.QtWidgets import QCheckBox
         self.delete_tex_checkbox = QCheckBox('删除tex文件')
         self.delete_tex_checkbox.setChecked(False)  # 默认不勾选
         tex_group_layout.addWidget(self.delete_tex_checkbox)
@@ -161,11 +162,6 @@ class FolderBrowser(QMainWindow):
         scb_group_layout.setSpacing(5)  # 设置内部垂直间距
         
         # 添加删除scb文件勾选框
-        self.delete_scb_checkbox = QWidget() if in_maya else QWidget()
-        if in_maya:
-            from PySide2.QtWidgets import QCheckBox
-        else:
-            from PySide2.QtWidgets import QCheckBox
         self.delete_scb_checkbox = QCheckBox('删除scb文件')
         self.delete_scb_checkbox.setChecked(False)  # 默认不勾选
         scb_group_layout.addWidget(self.delete_scb_checkbox)
@@ -182,11 +178,6 @@ class FolderBrowser(QMainWindow):
         anm_group_layout.setSpacing(5)  # 设置内部垂直间距
         
         # 添加删除anm文件勾选框
-        self.delete_anm_checkbox = QWidget() if in_maya else QWidget()
-        if in_maya:
-            from PySide2.QtWidgets import QCheckBox
-        else:
-            from PySide2.QtWidgets import QCheckBox
         self.delete_anm_checkbox = QCheckBox('删除anm文件')
         self.delete_anm_checkbox.setChecked(False)  # 默认不勾选
         anm_group_layout.addWidget(self.delete_anm_checkbox)
@@ -203,11 +194,6 @@ class FolderBrowser(QMainWindow):
         all_group_layout.setSpacing(5)  # 设置内部垂直间距
         
         # 添加删除源文件勾选框
-        self.delete_all_checkbox = QWidget() if in_maya else QWidget()
-        if in_maya:
-            from PySide2.QtWidgets import QCheckBox
-        else:
-            from PySide2.QtWidgets import QCheckBox
         self.delete_all_checkbox = QCheckBox('删除所有源文件')
         self.delete_all_checkbox.setChecked(False)  # 默认不勾选
         all_group_layout.addWidget(self.delete_all_checkbox)
@@ -255,7 +241,7 @@ class FolderBrowser(QMainWindow):
         # 保存当前路径为默认路径
         self.default_path = self.last_path
         self.save_settings()
-        msg_box = QtWidgets.QMessageBox(self) if in_maya else QMessageBox(self)
+        msg_box = QMessageBox(self)
         msg_box.information(self, "设置成功", f"默认路径已设置为：\n{self.default_path}")
     
     def load_first_column(self):
